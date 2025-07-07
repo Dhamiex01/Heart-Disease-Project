@@ -14,4 +14,4 @@ The dataset used for this project is the Heart Disease dataset, which includes v
 - **Scikit-learn**: A powerful library for machine learning that provides tools for model training, evaluation, and selection.
 
 ## Conclusion
-The model demonstrates the ability to predict heart disease based on various health metrics. Future work may include improving model accuracy through hyperparameter tuning, exploring additional features, or integrating more complex algorithms.
+The model demonstrates the ability to predict heart disease based on various health metrics. 
