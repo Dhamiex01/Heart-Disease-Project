@@ -1,4 +1,5 @@
 import os
+import logging
 import joblib
 import pandas as pd
 
@@ -6,6 +7,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
+
+
+# ============================================================
+# LOGGING
+# ============================================================
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================
@@ -39,7 +53,6 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
-
 MODEL_PATH = os.path.join(BASE_DIR, "model.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "scaler.pkl")
 
@@ -63,12 +76,13 @@ last_result = None
 try:
 
     model = joblib.load(MODEL_PATH)
-    print("Model loaded successfully.")
+
+    logger.info("Model loaded successfully.")
 
 except Exception as e:
 
-    print("ERROR loading model:")
-    print(e)
+    logger.error("ERROR loading model:")
+    logger.error(e)
 
     model = None
 
@@ -80,12 +94,13 @@ except Exception as e:
 try:
 
     scaler = joblib.load(SCALER_PATH)
-    print("Scaler loaded successfully.")
+
+    logger.info("Scaler loaded successfully.")
 
 except Exception as e:
 
-    print("ERROR loading scaler:")
-    print(e)
+    logger.error("ERROR loading scaler:")
+    logger.error(e)
 
     scaler = None
 
@@ -114,9 +129,6 @@ feature_names = [
 # ============================================================
 # PATIENT DATA MODEL
 # ============================================================
-
-from pydantic import BaseModel
-
 
 class PatientData(BaseModel):
 
@@ -155,6 +167,8 @@ if os.path.isdir(FRONTEND_DIR):
 @app.get("/")
 def home():
 
+    logger.info("Home page requested.")
+
     index_file = os.path.join(
         FRONTEND_DIR,
         "index.html"
@@ -169,6 +183,8 @@ def home():
 
 @app.get("/result.html")
 def result_page():
+
+    logger.info("Result page requested.")
 
     result_file = os.path.join(
         FRONTEND_DIR,
@@ -185,6 +201,8 @@ def result_page():
 @app.get("/health")
 def health():
 
+    logger.info("Health check requested.")
+
     return {
         "status": "ok",
         "model_loaded": model is not None,
@@ -199,7 +217,14 @@ def health():
 @app.get("/model-info")
 def model_info():
 
+    logger.info("Model information requested.")
+
     if model is None:
+
+        logger.error(
+            "Model information request failed: "
+            "model is not loaded."
+        )
 
         return {
             "error": "Model is not loaded."
@@ -228,11 +253,21 @@ def predict(data: PatientData):
 
     global last_result
 
+    logger.info(
+        "Prediction request received."
+    )
+
+
     # --------------------------------------------------------
     # CHECK MODEL
     # --------------------------------------------------------
 
     if model is None:
+
+        logger.error(
+            "Prediction failed: "
+            "machine-learning model is not loaded."
+        )
 
         return {
             "error": "Machine learning model is not loaded."
@@ -244,6 +279,11 @@ def predict(data: PatientData):
     # --------------------------------------------------------
 
     if scaler is None:
+
+        logger.error(
+            "Prediction failed: "
+            "scaler is not loaded."
+        )
 
         return {
             "error": "Scaler is not loaded."
@@ -274,18 +314,39 @@ def predict(data: PatientData):
     )
 
 
+    logger.info(
+        "Input data successfully prepared."
+    )
+
+
     # --------------------------------------------------------
     # SCALE DATA
     # --------------------------------------------------------
 
-    scaled_data = scaler.transform(input_data)
+    scaled_data = scaler.transform(
+        input_data
+    )
+
+
+    logger.info(
+        "Input data successfully scaled."
+    )
 
 
     # --------------------------------------------------------
     # MAKE PREDICTION
     # --------------------------------------------------------
 
-    prediction = model.predict(scaled_data)[0]
+    prediction = model.predict(
+        scaled_data
+    )[0]
+
+
+    logger.info(
+        "Prediction completed successfully. "
+        "Prediction=%s",
+        int(prediction)
+    )
 
 
     # --------------------------------------------------------
@@ -304,6 +365,17 @@ def predict(data: PatientData):
             max(probabilities) * 100
         )
 
+        logger.info(
+            "Prediction confidence=%.2f%%",
+            confidence
+        )
+
+    else:
+
+        logger.info(
+            "Model does not provide prediction probabilities."
+        )
+
 
     # --------------------------------------------------------
     # RESULT INTERPRETATION
@@ -311,7 +383,9 @@ def predict(data: PatientData):
 
     if int(prediction) == 1:
 
-        result_title = "Higher Likelihood of Heart Disease"
+        result_title = (
+            "Higher Likelihood of Heart Disease"
+        )
 
         result_message = (
             "The model predicts a higher likelihood "
@@ -322,7 +396,9 @@ def predict(data: PatientData):
 
     else:
 
-        result_title = "Lower Likelihood of Heart Disease"
+        result_title = (
+            "Lower Likelihood of Heart Disease"
+        )
 
         result_message = (
             "The model predicts a lower likelihood "
@@ -332,13 +408,21 @@ def predict(data: PatientData):
         result_status = "lower"
 
 
+    logger.info(
+        "Assessment result: %s",
+        result_status
+    )
+
+
     # --------------------------------------------------------
     # FORMAT CONFIDENCE
     # --------------------------------------------------------
 
     if confidence is not None:
 
-        confidence_display = f"{confidence:.0f}%"
+        confidence_display = (
+            f"{confidence:.0f}%"
+        )
 
     else:
 
@@ -350,32 +434,57 @@ def predict(data: PatientData):
     # --------------------------------------------------------
 
     last_result = {
+
         "success": True,
+
         "prediction": int(prediction),
+
         "result": result_status,
+
         "title": result_title,
+
         "message": result_message,
+
         "confidence": confidence,
+
         "confidence_display": confidence_display,
 
         "patient": {
 
             "age": data.age,
+
             "sex": data.sex,
+
             "cp": data.cp,
+
             "trestbps": data.trestbps,
+
             "chol": data.chol,
+
             "fbs": data.fbs,
+
             "restecg": data.restecg,
+
             "thalach": data.thalach,
+
             "exang": data.exang,
+
             "oldpeak": data.oldpeak,
+
             "slope": data.slope,
+
             "ca": data.ca,
+
             "thal": data.thal
+
         }
 
     }
+
+
+    logger.info(
+        "Prediction result stored successfully."
+    )
 
 
     # --------------------------------------------------------
@@ -389,28 +498,39 @@ def predict(data: PatientData):
 # RESULT DATA
 # ============================================================
 
-# ============================================================
-# RESULT DATA
-# ============================================================
-
 @app.get("/result-data")
 def get_result_data():
 
     global last_result
 
+    logger.info(
+        "Result data requested."
+    )
+
     if last_result is None:
+
+        logger.warning(
+            "Result data requested, "
+            "but no prediction result is available."
+        )
+
         return {
             "error": "No prediction result is available yet."
         }
 
     return last_result
 
+
 # ============================================================
-# RUN INFORMATION
+# OPENAPI INFORMATION
 # ============================================================
 
 @app.get("/openapi.json")
 def openapi_info():
+
+    logger.info(
+        "OpenAPI information requested."
+    )
 
     return app.openapi()
 
@@ -422,6 +542,10 @@ def openapi_info():
 if __name__ == "__main__":
 
     import uvicorn
+
+    logger.info(
+        "Starting Heart Health AI locally..."
+    )
 
     uvicorn.run(
         "main:app",
