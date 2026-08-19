@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Heart Disease Risk Assessment</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <div class="app-container">
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
+        <header class="header">
+
+            <div class="brand">
+                <div class="brand-icon">♥</div>
+                <span>Heart Health AI</span>
+            </div>
+
+            <h1>Heart Disease Risk Assessment</h1>
+
+            <p class="intro">
+                Use our machine-learning model to assess the likelihood
+                of heart disease based on selected clinical measurements.
+            </p>
+
+        </header>
+
+
+        <!-- =====================================================
+             FORM
+        ====================================================== -->
+
+        <form id="heartForm" novalidate>
+
+            <!-- =================================================
+                 PATIENT INFORMATION
+            ================================================== -->
+
+            <section class="form-section">
+
+                <div class="section-heading">
+                    <h2>Patient Information</h2>
+
+                    <p>
+                        Basic information about the patient.
+                    </p>
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- AGE -->
+
+                    <div class="form-group">
+
+                        <label for="age">
+                            Age
+                        </label>
+
+                        <input
+                            type="number"
+                            id="age"
+                            name="age"
+                            placeholder="Enter age"
+                            step="1"
+                        >
+
+                        <small class="field-help">
+                            Patient's age in years.
+                        </small>
+
+                        <small
+                            id="ageError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- SEX -->
+
+                    <div class="form-group">
+
+                        <label for="sex">
+                            Sex
+                        </label>
+
+                        <select
+                            id="sex"
+                            name="sex">
+
+                            <option value="">
+                                Select sex
+                            </option>
+
+                            <option value="Male">
+                                Male
+                            </option>
+
+                            <option value="Female">
+                                Female
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Biological sex recorded for the patient.
+                        </small>
+
+                        <small
+                            id="sexError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CLINICAL MEASUREMENTS
+            ================================================== -->
+
+            <section class="form-section">
+
+                <div class="section-heading">
+
+                    <h2>Clinical Measurements</h2>
+
+                    <p>
+                        Enter the patient's measured clinical values.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- BLOOD PRESSURE -->
+
+                    <div class="form-group">
+
+                        <label for="trestbps">
+                            Resting Blood Pressure
+                        </label>
+
+                        <input
+                            type="number"
+                            id="trestbps"
+                            name="trestbps"
+                            placeholder="Enter blood pressure"
+                            step="1"
+                        >
+
+                        <small class="field-help">
+                            Resting blood pressure in mmHg.
+                        </small>
+
+                        <small
+                            id="trestbpsError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- CHOLESTEROL -->
+
+                    <div class="form-group">
+
+                        <label for="chol">
+                            Serum Cholesterol
+                        </label>
+
+                        <input
+                            type="number"
+                            id="chol"
+                            name="chol"
+                            placeholder="Enter cholesterol"
+                            step="1"
+                        >
+
+                        <small class="field-help">
+                            Serum cholesterol level in mg/dL.
+                        </small>
+
+                        <small
+                            id="cholError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- FASTING BLOOD SUGAR -->
+
+                    <div class="form-group">
+
+                        <label for="fbs">
+                            Fasting Blood Sugar
+                        </label>
+
+                        <select
+                            id="fbs"
+                            name="fbs">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="No">
+                                No
+                            </option>
+
+                            <option value="Yes">
+                                Yes
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Whether fasting blood sugar is greater than 120 mg/dL.
+                        </small>
+
+                        <small
+                            id="fbsError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- MAXIMUM HEART RATE -->
+
+                    <div class="form-group">
+
+                        <label for="thalach">
+                            Maximum Heart Rate
+                        </label>
+
+                        <input
+                            type="number"
+                            id="thalach"
+                            name="thalach"
+                            placeholder="Enter maximum heart rate"
+                            step="1"
+                        >
+
+                        <small class="field-help">
+                            Maximum heart rate achieved.
+                        </small>
+
+                        <small
+                            id="thalachError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 HEART TEST RESULTS
+            ================================================== -->
+
+            <section class="form-section">
+
+                <div class="section-heading">
+
+                    <h2>Heart Test Results</h2>
+
+                    <p>
+                        Information obtained from the patient's heart-related tests.
+                    </p>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- CHEST PAIN -->
+
+                    <div class="form-group">
+
+                        <label for="cp">
+                            Chest Pain Type
+                        </label>
+
+                        <select
+                            id="cp"
+                            name="cp">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="Typical Angina">
+                                Typical Angina
+                            </option>
+
+                            <option value="Atypical Angina">
+                                Atypical Angina
+                            </option>
+
+                            <option value="Non-anginal Pain">
+                                Non-anginal Pain
+                            </option>
+
+                            <option value="Asymptomatic">
+                                Asymptomatic
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Type of chest pain experienced by the patient.
+                        </small>
+
+                        <small
+                            id="cpError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- RESTING ECG -->
+
+                    <div class="form-group">
+
+                        <label for="restecg">
+                            Resting ECG
+                        </label>
+
+                        <select
+                            id="restecg"
+                            name="restecg">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="Normal">
+                                Normal
+                            </option>
+
+                            <option value="ST-T Wave Abnormality">
+                                ST-T Wave Abnormality
+                            </option>
+
+                            <option value="Left Ventricular Hypertrophy">
+                                Left Ventricular Hypertrophy
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Result of the resting electrocardiogram.
+                        </small>
+
+                        <small
+                            id="restecgError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- ST DEPRESSION -->
+
+                    <div class="form-group">
+
+                        <label for="oldpeak">
+                            ST Depression (Oldpeak)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="oldpeak"
+                            name="oldpeak"
+                            placeholder="Enter ST depression"
+                            step="0.1"
+                        >
+
+                        <small class="field-help">
+                            ST depression induced by exercise relative to rest.
+                        </small>
+
+                        <small
+                            id="oldpeakError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- EXERCISE INDUCED ANGINA -->
+
+                    <div class="form-group">
+
+                        <label for="exang">
+                            Exercise Induced Angina
+                        </label>
+
+                        <select
+                            id="exang"
+                            name="exang">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="No">
+                                No
+                            </option>
+
+                            <option value="Yes">
+                                Yes
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Whether exercise induced angina is present.
+                        </small>
+
+                        <small
+                            id="exangError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- ST SEGMENT SLOPE -->
+
+                    <div class="form-group">
+
+                        <label for="slope">
+                            ST Segment Slope
+                        </label>
+
+                        <select
+                            id="slope"
+                            name="slope">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="Upsloping">
+                                Upsloping
+                            </option>
+
+                            <option value="Flat">
+                                Flat
+                            </option>
+
+                            <option value="Downsloping">
+                                Downsloping
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Slope of the peak exercise ST segment.
+                        </small>
+
+                        <small
+                            id="slopeError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- MAJOR VESSELS -->
+
+                    <div class="form-group">
+
+                        <label for="ca">
+                            Major Vessels (CA)
+                        </label>
+
+                        <select
+                            id="ca"
+                            name="ca">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="0">
+                                0
+                            </option>
+
+                            <option value="1">
+                                1
+                            </option>
+
+                            <option value="2">
+                                2
+                            </option>
+
+                            <option value="3">
+                                3
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Number of major vessels colored by fluoroscopy.
+                        </small>
+
+                        <small
+                            id="caError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+
+                    <!-- THALASSEMIA -->
+
+                    <div class="form-group">
+
+                        <label for="thal">
+                            Thalassemia
+                        </label>
+
+                        <select
+                            id="thal"
+                            name="thal">
+
+                            <option value="">
+                                Select option
+                            </option>
+
+                            <option value="Normal">
+                                Normal
+                            </option>
+
+                            <option value="Fixed Defect">
+                                Fixed Defect
+                            </option>
+
+                            <option value="Reversible Defect">
+                                Reversible Defect
+                            </option>
+
+                        </select>
+
+                        <small class="field-help">
+                            Thalassemia result recorded for the patient.
+                        </small>
+
+                        <small
+                            id="thalError"
+                            class="error-message">
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 SUBMIT
+            ================================================== -->
+
+            <button
+                type="submit"
+                id="submitButton"
+                class="submit-button">
+
+                Assess Heart Disease Risk
+
+            </button>
+
+        </form>
+
+
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
+        <footer class="footer">
+
+            <span>Heart Health AI</span>
+
+            <span>•</span>
+
+            <span>Machine-learning based assessment</span>
+
+            <span>•</span>
+
+            <span>Not a medical diagnosis</span>
+
+        </footer>
+
+    </div>
+
+</div>
+
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

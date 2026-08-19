@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Heart Disease Risk Result</title>
+
+    <link rel="stylesheet"
+          href="/static/style.css">
+
+    <style>
+
+        /* =====================================================
+           RESULT PAGE
+        ===================================================== */
+
+        .result-page {
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .result-wrapper {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 42px 24px 24px;
+            box-shadow: 0 15px 45px rgba(0, 40, 100, 0.08);
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 38px;
+        }
+
+        .result-header h1 {
+            margin: 0;
+            color: #073b82;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .heart-symbol {
+            color: #073b82;
+            font-size: 28px;
+            margin-right: 8px;
+        }
+
+        /* =====================================================
+           RESULT CARD
+        ===================================================== */
+
+        .result-card {
+            border-radius: 20px;
+            padding: 42px 30px 38px;
+            text-align: center;
+            border: 1px solid #b9ebd1;
+            background: #effcf5;
+        }
+
+        .result-card.high-risk {
+            background: #fff2f2;
+            border-color: #ffc4c4;
+        }
+
+        .result-icon {
+            width: 66px;
+            height: 66px;
+            margin: 0 auto 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #d9f8e7;
+            color: #00a85a;
+
+            font-size: 38px;
+            font-weight: 700;
+        }
+
+        .high-risk .result-icon {
+            background: #ffe0e0;
+            color: #dc2626;
+        }
+
+        .result-title {
+            margin: 0 0 12px;
+
+            color: #073b82;
+
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .result-message {
+            max-width: 720px;
+            margin: 0 auto 24px;
+
+            color: #275b9b;
+
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* =====================================================
+           CONFIDENCE
+        ===================================================== */
+
+        .confidence-box {
+            width: 320px;
+            max-width: 100%;
+
+            margin: 0 auto 30px;
+
+            padding: 18px 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: #ffffff;
+            border-radius: 16px;
+
+            box-shadow: 0 10px 25px rgba(0, 40, 100, 0.08);
+        }
+
+        .confidence-label {
+            color: #5273a5;
+            font-size: 15px;
+        }
+
+        .confidence-value {
+            color: #073b82;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* =====================================================
+           PATIENT INFORMATION
+        ===================================================== */
+
+        .patient-section {
+            max-width: 900px;
+            margin: 0 auto 28px;
+
+            background: #ffffff;
+
+            border-radius: 18px;
+            padding: 28px 24px;
+
+            box-shadow: 0 10px 30px rgba(0, 40, 100, 0.07);
+        }
+
+        .patient-section h2 {
+            margin: 0 0 22px;
+
+            text-align: center;
+
+            color: #073b82;
+            font-size: 21px;
+        }
+
+        .patient-grid {
+            display: grid;
+
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+
+            gap: 12px 16px;
+        }
+
+        .patient-item {
+            min-height: 44px;
+
+            padding: 12px 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            border: 1px solid #d7e3f7;
+            border-radius: 10px;
+
+            background: #f8fbff;
+
+            text-align: left;
+        }
+
+        .patient-label {
+            color: #315d98;
+            font-size: 13px;
+        }
+
+        .patient-value {
+            color: #073b82;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        /* =====================================================
+           DISCLAIMER
+        ===================================================== */
+
+        .medical-disclaimer {
+            max-width: 720px;
+
+            margin: 26px auto;
+
+            color: #315d98;
+
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
+        .another-patient-btn {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-width: 190px;
+
+            padding: 13px 22px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #073b82;
+            color: #ffffff;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .another-patient-btn:hover {
+            background: #052f68;
+
+            transform: translateY(-1px);
+
+            box-shadow: 0 8px 18px rgba(7, 59, 130, 0.2);
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .result-footer {
+            margin-top: 30px;
+            padding-top: 22px;
+
+            border-top: 1px solid #dbe5f2;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 12px;
+            flex-wrap: wrap;
+
+            color: #315d98;
+
+            font-size: 12px;
+        }
+
+        .footer-dot {
+            color: #8aa4c7;
+        }
+
+        /* =====================================================
+           ERROR
+        ===================================================== */
+
+        .result-error {
+            padding: 20px;
+
+            border: 1px solid #ffb8b8;
+            border-radius: 12px;
+
+            background: #fff1f1;
+
+            color: #d80000;
+
+            text-align: center;
+            font-size: 15px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .result-page {
+                padding: 20px 12px;
+            }
+
+            .result-wrapper {
+                padding: 30px 14px 20px;
+                border-radius: 18px;
+            }
+
+            .result-header h1 {
+                font-size: 30px;
+            }
+
+            .result-card {
+                padding: 30px 15px;
+            }
+
+            .result-title {
+                font-size: 21px;
+            }
+
+            .patient-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-section {
+                padding: 22px 14px;
+            }
+
+            .confidence-box {
+                width: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="result-page">
+
+    <main class="result-wrapper">
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <header class="result-header">
+
+            <h1>
+                <span class="heart-symbol">♥</span>
+                Heart Health AI
+            </h1>
+
+        </header>
+
+
+        <!-- =================================================
+             RESULT CONTAINER
+        ================================================== -->
+
+        <div id="resultContainer">
+
+            <div class="result-error">
+                Loading prediction result...
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="result-footer">
+
+            <span>Heart Health AI</span>
+
+            <span class="footer-dot">•</span>
+
+            <span>Machine-learning based assessment</span>
+
+            <span class="footer-dot">•</span>
+
+            <span>Not a medical diagnosis</span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const resultContainer =
+        document.getElementById("resultContainer");
+
+
+    /* =====================================================
+       GET SAVED RESULT
+    ===================================================== */
+
+    const savedResult =
+        localStorage.getItem("heartPredictionResult");
+
+
+    if (!savedResult) {
+
+        resultContainer.innerHTML = `
+            <div class="result-error">
+                Unable to load the prediction result.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    let result;
+
+
+    /* =====================================================
+       PARSE RESULT
+    ===================================================== */
+
+    try {
+
+        result = JSON.parse(savedResult);
+
+    } catch (error) {
+
+        console.error(
+            "Could not read saved prediction:",
+            error
+        );
+
+        resultContainer.innerHTML = `
+            <div class="result-error">
+                Unable to load the prediction result.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /* =====================================================
+       GET PATIENT DATA
+    ===================================================== */
+
+    let patient = {};
+
+    const savedPatient =
+        localStorage.getItem("heartPatientData");
+
+
+    if (savedPatient) {
+
+        try {
+
+            patient = JSON.parse(savedPatient);
+
+        } catch (error) {
+
+            console.error(
+                "Could not read patient information:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       RESULT VALUES
+    ===================================================== */
+
+    const prediction =
+        Number(result.prediction);
+
+
+    const isHighRisk =
+        prediction === 1;
+
+
+    const title =
+        result.title ||
+        (
+            isHighRisk
+                ? "Higher Likelihood of Heart Disease"
+                : "Lower Likelihood of Heart Disease"
+        );
+
+
+    const message =
+        result.message ||
+        (
+            isHighRisk
+                ? "The model predicts a higher likelihood of heart disease based on the information provided."
+                : "The model predicts a lower likelihood of heart disease based on the information provided."
+        );
+
+
+    const confidence =
+        result.confidence !== undefined &&
+        result.confidence !== null
+            ? `${Number(result.confidence).toFixed(0)}%`
+            : "N/A";
+
+
+    /* =====================================================
+       PATIENT VALUE FORMATTERS
+    ===================================================== */
+
+    function getSex(value) {
+
+        if (
+            value === 1 ||
+            value === "1" ||
+            value === "Male" ||
+            value === "male"
+        ) {
+
+            return "Male";
+
+        }
+
+        if (
+            value === 0 ||
+            value === "0" ||
+            value === "Female" ||
+            value === "female"
+        ) {
+
+            return "Female";
+
+        }
+
+        return value ?? "N/A";
+    }
+
+
+    function getYesNo(value) {
+
+        if (
+            value === 1 ||
+            value === "1" ||
+            value === true ||
+            value === "Yes"
+        ) {
+
+            return "Yes";
+
+        }
+
+        if (
+            value === 0 ||
+            value === "0" ||
+            value === false ||
+            value === "No"
+        ) {
+
+            return "No";
+
+        }
+
+        return value ?? "N/A";
+    }
+
+
+    function getChestPain(value) {
+
+        const values = {
+
+            0: "Typical Angina",
+            1: "Atypical Angina",
+            2: "Non-Anginal Pain",
+            3: "Asymptomatic"
+
+        };
+
+        return values[value] ?? value ?? "N/A";
+    }
+
+
+    function getRestingECG(value) {
+
+        const values = {
+
+            0: "Normal",
+            1: "ST-T Wave Abnormality",
+            2: "Left Ventricular Hypertrophy"
+
+        };
+
+        return values[value] ?? value ?? "N/A";
+    }
+
+
+    function getSlope(value) {
+
+        const values = {
+
+            0: "Upsloping",
+            1: "Flat",
+            2: "Downsloping"
+
+        };
+
+        return values[value] ?? value ?? "N/A";
+    }
+
+
+    function getThalassemia(value) {
+
+        const values = {
+
+            0: "Normal",
+            1: "Fixed Defect",
+            2: "Reversible Defect",
+            3: "Reversible Defect"
+
+        };
+
+        return values[value] ?? value ?? "N/A";
+    }
+
+
+    /* =====================================================
+       DISPLAY PATIENT DATA
+    ===================================================== */
+
+    const patientItems = [
+
+        {
+            label: "Age",
+            value: patient.age
+        },
+
+        {
+            label: "Sex",
+            value: getSex(patient.sex)
+        },
+
+        {
+            label: "Chest Pain Type",
+            value: getChestPain(patient.cp)
+        },
+
+        {
+            label: "Resting Blood Pressure",
+            value: patient.trestbps
+        },
+
+        {
+            label: "Cholesterol",
+            value: patient.chol
+        },
+
+        {
+            label: "Fasting Blood Sugar",
+            value: getYesNo(patient.fbs)
+        },
+
+        {
+            label: "Resting ECG",
+            value: getRestingECG(patient.restecg)
+        },
+
+        {
+            label: "Maximum Heart Rate",
+            value: patient.thalach
+        },
+
+        {
+            label: "Exercise Induced Angina",
+            value: getYesNo(patient.exang)
+        },
+
+        {
+            label: "ST Depression",
+            value: patient.oldpeak
+        },
+
+        {
+            label: "ST Segment Slope",
+            value: getSlope(patient.slope)
+        },
+
+        {
+            label: "Major Vessels (CA)",
+            value: patient.ca
+        },
+
+        {
+            label: "Thalassemia",
+            value: getThalassemia(patient.thal)
+        }
+
+    ];
+
+
+    /* =====================================================
+       BUILD PATIENT INFORMATION
+    ===================================================== */
+
+    const patientHTML =
+        patientItems.map(item => {
+
+            return `
+
+                <div class="patient-item">
+
+                    <span class="patient-label">
+                        ${item.label}
+                    </span>
+
+                    <span class="patient-value">
+                        ${item.value ?? "N/A"}
+                    </span>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+
+    /* =====================================================
+       DISPLAY RESULT
+    ===================================================== */
+
+    resultContainer.innerHTML = `
+
+        <section class="result-card ${isHighRisk ? "high-risk" : ""}">
+
+            <div class="result-icon">
+
+                ${isHighRisk ? "!" : "✓"}
+
+            </div>
+
+
+            <h2 class="result-title">
+
+                ${title}
+
+            </h2>
+
+
+            <p class="result-message">
+
+                ${message}
+
+            </p>
+
+
+            <div class="confidence-box">
+
+                <span class="confidence-label">
+                    Model confidence
+                </span>
+
+                <span class="confidence-value">
+                    ${confidence}
+                </span>
+
+            </div>
+
+
+            <section class="patient-section">
+
+                <h2>
+                    Patient Information
+                </h2>
+
+
+                <div class="patient-grid">
+
+                    ${patientHTML}
+
+                </div>
+
+            </section>
+
+
+            <p class="medical-disclaimer">
+
+                This result is generated by a machine-learning
+                model and is not a medical diagnosis.
+
+            </p>
+
+
+            <button
+                type="button"
+                class="another-patient-btn"
+                id="anotherPatientBtn">
+
+                Assess Another Patient
+
+            </button>
+
+        </section>
+
+    `;
+
+
+    /* =====================================================
+       ASSESS ANOTHER PATIENT
+    ===================================================== */
+
+    const anotherPatientBtn =
+        document.getElementById("anotherPatientBtn");
+
+
+    if (anotherPatientBtn) {
+
+        anotherPatientBtn.addEventListener(
+            "click",
+            function () {
+
+                localStorage.removeItem(
+                    "heartPredictionResult"
+                );
+
+                localStorage.removeItem(
+                    "heartPatientData"
+                );
+
+                window.location.href = "/";
+
+            }
+        );
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>
